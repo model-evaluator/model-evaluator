@@ -1,0 +1,14 @@
+2021-08-13 10:52:27,259 [Worker-5: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2021-08-13 10:53:01,124 [Start Help Server] INFO  org.eclipse.jetty.util.log - Logging initialized @63076ms to org.eclipse.jetty.util.log.Slf4jLog
+2021-08-13 10:53:01,234 [Start Help Server] INFO  org.eclipse.jetty.server.Server - jetty-9.4.35.v20201120; built: 2020-11-27T20:36:51.615Z; git: bdc54f03a5e0a7e280fab27f55c3c75ee8da89fb; jvm 15.0.1+9-18
+2021-08-13 10:53:01,249 [Start Help Server] INFO  org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2021-08-13 10:53:01,249 [Start Help Server] INFO  org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2021-08-13 10:53:01,250 [Start Help Server] INFO  org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2021-08-13 10:53:01,271 [Start Help Server] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@37114a55{/help,null,AVAILABLE}
+2021-08-13 10:53:01,282 [Start Help Server] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@73a3b0f4{HTTP/1.1, (http/1.1)}{127.0.0.1:49398}
+2021-08-13 10:53:01,282 [Start Help Server] INFO  org.eclipse.jetty.server.Server - Started @63235ms
+2021-08-13 10:53:01,282 [Start Help Server] INFO  org.eclipse.jetty.server.session - node0 Scavenging every 726000ms
+2021-08-13 11:04:23,803 [Stop Help Server] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@73a3b0f4{HTTP/1.1, (http/1.1)}{127.0.0.1:0}
+2021-08-13 11:04:23,803 [Stop Help Server] INFO  org.eclipse.jetty.server.session - node0 Stopped scavenging
+2021-08-13 11:04:23,815 [Stop Help Server] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@37114a55{/help,null,STOPPED}
+2021-08-13 11:04:35,578 [Worker-6: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
