@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.model-eval</groupId>
+  <artifactId>model-eval</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Model evaluator</description>
+  
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version> <!-- use the appropriate version -->
+            <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <classpathPrefix>lib/</classpathPrefix>
+                        <mainClass>main.MainAdapter</mainClass> 
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version> <!-- Use a newer version, e.g., 3.8.1 -->
+            <configuration>
+                <source>1.8</source> <!-- Use 1.8 for Java 8, or another version if you prefer -->
+                <target>1.8</target> <!-- Use 1.8 for Java 8, or another version if you prefer -->
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.6.0</version>
+            <configuration>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                    <manifest>
+                        <mainClass>
+                            main.MainAdapter
+                        </mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>make-assembly</id>
+                    <!-- this is used for inheritance merges -->
+                    <phase>package</phase>
+                    <!-- bind to the packaging phase -->
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    
+</build>
+<dependencies>
+        <!-- An example dependency -->
+        <dependency>
+            <groupId>org.alloytools</groupId>
+            <artifactId>alloy</artifactId>
+            <version>1.0</version>                  
+        </dependency>
+        <dependency>
+            <groupId>javers</groupId>
+            <artifactId>javerscore</artifactId>
+            <version>6.6.5</version>                  
+        </dependency>
+        <dependency>
+            <groupId>picocontainer</groupId>
+            <artifactId>pico</artifactId>
+            <version>2.15</version>                  
+        </dependency>
+        <dependency>
+        	<groupId>org.seleniumhq.selenium</groupId>
+        	<artifactId>selenium-java</artifactId>
+        	<version>3.14.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.seleniumhq.selenium</groupId>
+        	<artifactId>selenium-devtools</artifactId>
+        	<version>4.0.0-rc-1</version>
+        </dependency>
+        <!-- Add more dependencies as needed -->
+    </dependencies>
+  
+</project>

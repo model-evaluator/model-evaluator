@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="Int"/>
+   <type name="String"/>
+   <type name="univ"/>
+   <type name="seq/Int"/>
+   <type name="scmexec/scmCallFunction/browser/url/About"/>
+   <type name="scmexec/scmCallFunction/browser/url/Blob"/>
+   <type name="scmexec/scmCallFunction/browser/url/Chrome"/>
+   <type name="scmexec/scmCallFunction/browser/url/Data"/>
+   <type name="scmexec/scmCallFunction/browser/url/Deny"/>
+   <type name="scmexec/scmCallFunction/browser/url/False"/>
+   <type name="scmexec/scmCallFunction/browser/url/Http"/>
+   <type name="scmexec/scmCallFunction/browser/url/Https"/>
+   <type name="scmexec/scmCallFunction/browser/url/Iframe"/>
+   <type name="scmexec/scmCallFunction/browser/url/RFC"/>
+   <type name="scmexec/scmCallFunction/browser/url/Safari"/>
+   <type name="scmexec/scmCallFunction/browser/url/SameOrigin"/>
+   <type name="scmexec/scmCallFunction/browser/url/TopLWindow"/>
+   <type name="scmexec/scmCallFunction/browser/url/True"/>
+   <type name="scmexec/scmCallFunction/browser/url/open$5/Ord"/>
+   <type name="scmexec/scmCallFunction/browser/url/open$6/Ord"/>
+   <type name="scmexec/scmCallFunction/browser/url/open$7/Ord"/>
+   <type name="scmexec/scmCallFunction/browser/url/open$8/Ord"/>
+   <type name="scmexec/scmCallFunction/browser/url/ordering/Ord"/>
+   <set name="$tzx_nbc" type="scmexec/scmCallFunction/browser/BrowsingContext"/>
+   <set name="$tzx_nbc2" type="scmexec/scmCallFunction/browser/BrowsingContext"/>
+   <set name="$tzx_nbc3" type="scmexec/scmCallFunction/browser/BrowsingContext"/>
+</node>
+
+<node color="Blue" label="Origin">
+   <type name="scmexec/scmCallFunction/browser/url/Origin"/>
+</node>
+
+<node color="Gray" label="Url">
+   <type name="scmexec/scmCallFunction/browser/url/Url"/>
+</node>
+
+<node color="Green" label="BrowsingContext">
+   <type name="scmexec/scmCallFunction/browser/BrowsingContext"/>
+</node>
+
+<node color="Red" label="Function">
+   <type name="scmexec/scmCallFunction/Function"/>
+</node>
+
+<node color="White" label="Document">
+   <type name="scmexec/scmCallFunction/browser/url/Document"/>
+</node>
+
+<node label="AboutUrl">
+   <type name="scmexec/scmCallFunction/browser/url/AboutUrl"/>
+</node>
+
+<node label="AbsoluteUrl">
+   <type name="scmexec/scmCallFunction/browser/url/AbsoluteUrl"/>
+</node>
+
+<node label="Access2Media">
+   <type name="scmexec/scmCallFunction/Access2Media"/>
+</node>
+
+<node label="AddSandbox">
+   <type name="scmexec/scmCallFunction/AddSandbox"/>
+</node>
+
+<node label="BlankOrigin">
+   <type name="scmexec/scmCallFunction/browser/url/BlankOrigin"/>
+</node>
+
+<node label="BlobAbsoluteUrl">
+   <type name="scmexec/scmCallFunction/browser/url/BlobAbsoluteUrl"/>
+</node>
+
+<node label="BlobNoPathUrl">
+   <type name="scmexec/scmCallFunction/browser/url/BlobNoPathUrl"/>
+</node>
+
+<node label="BlobOnlyDomainUrl">
+   <type name="scmexec/scmCallFunction/browser/url/BlobOnlyDomainUrl"/>
+</node>
+
+<node label="BlobUrl">
+   <type name="scmexec/scmCallFunction/browser/url/BlobUrl"/>
+</node>
+
+<node label="Boolean">
+   <type name="scmexec/scmCallFunction/browser/url/Boolean"/>
+</node>
+
+<node label="Browser">
+   <type name="scmexec/scmCallFunction/browser/Browser"/>
+</node>
+
+<node label="Call">
+   <type name="scmexec/scmCallFunction/Call"/>
+</node>
+
+<node label="Client">
+   <type name="scmexec/scmCallFunction/browser/url/Client"/>
+</node>
+
+<node label="CreateBlob">
+   <type name="scmexec/scmCallFunction/CreateBlob"/>
+</node>
+
+<node label="CreateIframe">
+   <type name="scmexec/scmCallFunction/CreateIframe"/>
+</node>
+
+<node label="DataUrl">
+   <type name="scmexec/scmCallFunction/browser/url/DataUrl"/>
+</node>
+
+<node label="DocumentWrite">
+   <type name="scmexec/scmCallFunction/DocumentWrite"/>
+</node>
+
+<node label="Domain">
+   <type name="scmexec/scmCallFunction/browser/url/Domain"/>
+</node>
+
+<node label="Endpoint">
+   <type name="scmexec/scmCallFunction/browser/url/Endpoint"/>
+</node>
+
+<node label="ErrorDocument">
+   <set name="scmexec/scmCallFunction/browser/url/ErrorDocument" type="scmexec/scmCallFunction/browser/url/Document"/>
+</node>
+
+<node label="ErrorUrl">
+   <type name="scmexec/scmCallFunction/browser/url/ErrorUrl"/>
+</node>
+
+<node label="History">
+   <type name="scmexec/scmCallFunction/browser/history/History"/>
+</node>
+
+<node label="HistoryPushState">
+   <type name="scmexec/scmCallFunction/HistoryPushState"/>
+</node>
+
+<node label="HttpUrl">
+   <type name="scmexec/scmCallFunction/browser/url/HttpUrl"/>
+</node>
+
+<node label="HttpsUrl">
+   <type name="scmexec/scmCallFunction/browser/url/HttpsUrl"/>
+</node>
+
+<node label="Media">
+   <type name="scmexec/scmCallFunction/browser/url/Media"/>
+</node>
+
+<node label="Navigate">
+   <type name="scmexec/scmCallFunction/Navigate"/>
+</node>
+
+<node label="OpaqueOrigin">
+   <type name="scmexec/scmCallFunction/browser/url/OpaqueOrigin"/>
+</node>
+
+<node label="Popup">
+   <type name="scmexec/scmCallFunction/Popup"/>
+</node>
+
+<node label="Scheme">
+   <type name="scmexec/scmCallFunction/browser/url/Scheme"/>
+</node>
+
+<node label="Server">
+   <type name="scmexec/scmCallFunction/browser/url/Server"/>
+</node>
+
+<node label="Skip">
+   <type name="scmexec/scmCallFunction/Skip"/>
+</node>
+
+<node label="StartupOrigin">
+   <type name="scmexec/scmCallFunction/browser/url/StartupOrigin"/>
+</node>
+
+<node label="StartupUrl">
+   <type name="scmexec/scmCallFunction/browser/url/StartupUrl"/>
+</node>
+
+<node label="TupleOrigin">
+   <type name="scmexec/scmCallFunction/browser/url/TupleOrigin"/>
+</node>
+
+<node label="ValidBlobUrl">
+   <type name="scmexec/scmCallFunction/browser/url/ValidBlobUrl"/>
+</node>
+
+<node label="ValidUrl">
+   <type name="scmexec/scmCallFunction/browser/url/ValidUrl"/>
+</node>
+
+<node label="Version">
+   <type name="scmexec/scmCallFunction/browser/url/Version"/>
+</node>
+
+<node label="Window">
+   <type name="scmexec/scmCallFunction/browser/url/Window"/>
+</node>
+
+<node label="XFrameOptions">
+   <type name="scmexec/scmCallFunction/browser/url/XFrameOptions"/>
+</node>
+
+<node label="XFrameOptionsType">
+   <type name="scmexec/scmCallFunction/browser/url/XFrameOptionsType"/>
+</node>
+
+<node visible="no" label="Dns">
+   <type name="scmexec/scmCallFunction/browser/url/Dns"/>
+</node>
+
+<node visible="no" label="Path">
+   <type name="scmexec/scmCallFunction/browser/url/Path"/>
+</node>
+
+<edge visible="no">
+   <relation name="resources"> <type name="scmexec/scmCallFunction/browser/url/Server"/> <type name="scmexec/scmCallFunction/browser/url/Path"/> <type name="scmexec/scmCallFunction/browser/url/Document"/> </relation>
+   <relation name="scheme"> <type name="scmexec/scmCallFunction/browser/url/TupleOrigin"/> <type name="scmexec/scmCallFunction/browser/url/Scheme"/> </relation>
+   <relation name="scheme"> <type name="scmexec/scmCallFunction/browser/url/Url"/> <type name="scmexec/scmCallFunction/browser/url/Scheme"/> </relation>
+   <relation name="sessionHistory"> <type name="scmexec/scmCallFunction/browser/BrowsingContext"/> <type name="scmexec/scmCallFunction/browser/history/History"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes">
+   <relation name="url"> <type name="scmexec/scmCallFunction/CreateBlob"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+   <relation name="url"> <type name="scmexec/scmCallFunction/CreateIframe"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+   <relation name="url"> <type name="scmexec/scmCallFunction/HistoryPushState"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+   <relation name="url"> <type name="scmexec/scmCallFunction/Navigate"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+   <relation name="url"> <type name="scmexec/scmCallFunction/Popup"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+   <relation name="url"> <type name="scmexec/scmCallFunction/browser/history/History"/> <type name="scmexec/scmCallFunction/browser/url/Url"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
