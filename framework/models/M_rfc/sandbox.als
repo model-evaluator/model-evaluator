@@ -1,8 +1,6 @@
 module sandbox
 
---open concreteUrl
 open browser
---open concreteCallFunction
 
 
 pred sandboxedIframeOrigin [nbc : BrowsingContext] {
@@ -10,15 +8,9 @@ pred sandboxedIframeOrigin [nbc : BrowsingContext] {
     nbc.origin' = OpaqueOrigin
 }
 
---SAFARI here
 pred regularIframeOrigin [nbc : BrowsingContext, u : Url] {
     nbc.isSandboxed' = False
     let u1 = origin[u] |
-    	/*u1 = BlankOrigin implies (
-    		nbc.origin' = OpaqueOrigin
-    	)else (
-    		nbc.origin' = u1
-    	)*/
     	nbc.origin' = u1
     
 }

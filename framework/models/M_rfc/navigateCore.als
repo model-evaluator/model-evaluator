@@ -1,18 +1,14 @@
 module navigateCore
 
----open concreteUrl
 open browser
---open orderings
 open appendHistory
---open scmCallFunction
 open secureContext
 open sandbox
 
 
 
 pred navAbsUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
-    d !in Document.elements
-    d !in ErrorDocument
+
     url in AbsoluteUrl
     d.src' = url 
     d.elements' = d.elements
@@ -22,43 +18,30 @@ pred navAbsUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
 }
 
 pred navDataHtmlUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
-    d !in Document.elements 
-    d !in ErrorDocument
+
     url in DataUrl
     nbc.currentDoc' = d
-    --w.doc' = d
     d.src' = url
-    d.elements' = d.elements--d.elements
+    url.(DataUrl <: content) = d
+    d.elements' = d.elements
 }
 
 
 
 pred navBlobBlobsHtmlUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
-    d !in Document.elements
-    d !in ErrorDocument
-    url in ValidBlobUrl
+
+    url in BlobUrl
     nbc.currentDoc' = d
-    --w.doc' = d
     d.src' = url
+    url.(BlobUrl <: content) = d
     d.elements' = d.elements
 
 }
 
 
-pred navBlobNoBlobsUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
-    d !in Document.elements
-    d in ErrorDocument
-    url in BlobUrl
-    nbc.currentDoc' = d
-    d.src' = url
-    d.elements' = none
-    no nbc.nestedBcs' 
-
-}
 
 pred navAboutUrlCore [nbc : BrowsingContext, url : Url, d : Document, valid : set Url] {
-    d !in Document.elements
-    d !in ErrorDocument
+
     url in valid
     nbc.currentDoc' = d
     d.src' = url
@@ -69,8 +52,7 @@ pred navAboutUrlCore [nbc : BrowsingContext, url : Url, d : Document, valid : se
 }
 
 pred navErrorUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
-    d !in Document.elements
-    d in ErrorDocument
+
 
     d.elements' = none
     nbc.currentDoc' = d
@@ -85,7 +67,7 @@ pred noDocInside [els : set Document ] {
 }
 
 pred addNavigateNoNestedBcs [ nbc : BrowsingContext] {
-    --noDocInside[d1.elements] implies 
+
     no nbc.nestedBcs'
 }
 

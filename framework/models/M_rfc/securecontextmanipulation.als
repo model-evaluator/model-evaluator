@@ -9,21 +9,16 @@ open createIframe
 
 
 pred navigateAbsUrlDeny [f : Function, c : Call, u : Url, d : Document] {
-    let nbc = f.bc | --let u = f.(Navigate <: url) | 
+    let nbc = f.bc |
         let rbc = f.bc.~nestedBcs |
-        --let d = f.(Navigate <: response) |
         let d2 = nbc.currentDoc |
 
-
         u in AbsoluteUrl and
-
 
         nbc.win in Iframe and
 
         some c.to.xframeOptions[d] and 
         ((c.to.xframeOptions[d].option = Deny) or (c.to.xframeOptions[d].option = SameOrigin and rbc.origin != c.to.(Server <: origin) )) and
-
-        ---the opposite should be here also
 
         navigateAbsoluteUrlDeny[ nbc, d, d2, u, c.to] and 
         d = c.to.resources[u.path] and 
@@ -34,9 +29,8 @@ pred navigateAbsUrlDeny [f : Function, c : Call, u : Url, d : Document] {
 
 pred navigateAbsUrlNoDeny [f : Function, c : Call, u : Url, d : Document, lr : Boolean] {
     
-    let nbc = f.bc | --let u = f.(Navigate <: url) | 
+    let nbc = f.bc | 
         let rbc = f.bc.~nestedBcs |
-        --let d = f.(Navigate <: response) |
         let d2 = nbc.currentDoc |
 
         (some d2 implies d = d2) and
@@ -57,28 +51,18 @@ pred navigateAbsUrlNoDeny [f : Function, c : Call, u : Url, d : Document, lr : B
             unchanged[nbc, sessionHistory]
         )) and
         
-
-        Browser.blobs' = Browser.blobs - (nbc -> Url + nbc.^nestedBcs -> Url ) and 
-
         nbc.accesses' = none and
-        --nbc.opening' = none and --TODO delete the ~opening
         unchanged[nbc, opening] and
         resetIframe[d2] and
 
-        navigateAbsoluteUrl[ nbc, d, d2, u] and 
+        navigateAbsoluteUrl[ nbc, d, u] and 
         d = c.to.resources[u.path] and 
         c.to in Server and 
         c.to in Dns.map[u.(AbsoluteUrl <: domain)] 
 
 }
 
-pred navigate [f : Function, c : Call, u : Url, d : Document, lr : Boolean] {
-        
-    let nbc = f.bc | --let u = f.(Navigate <: url) | 
-            --let d = f.(Navigate <: response) |
-    let d2 = nbc.currentDoc |
-
-        (some d2 implies d = d2) and
+pred navigate [nbc : BrowsingContext, s : BrowsingContext + Browser + Server, u : Url, d : Document, lr : Boolean] {
 
         (lr = False implies (
             one sh : History |
@@ -89,24 +73,103 @@ pred navigate [f : Function, c : Call, u : Url, d : Document, lr : Boolean] {
 
         some d and
 
+        d !in Document.elements and
+
         nbc.accesses' = none and
         unchanged[nbc, opening] and
-        Browser.blobs' = Browser.blobs - (nbc -> Url + nbc.^nestedBcs -> Url ) and 
 
-        resetIframe[d2] and
+        resetIframe[ nbc.currentDoc] and
+
+        nbc.^nestedBcs' = none and 
+
 
         (
-            (navigateAbsoluteUrl[ nbc, d, d2, u] and nbc.win in TopLWindow and d = c.to.resources[f.(Navigate <: url).path] and d.elements = c.to.constantResources[f.(Navigate <: url).path -> d] and c.to in Server and c.to in Dns.map[f.(Navigate <: url).(AbsoluteUrl <: domain)] ) or 
-            (navigateDataUrl[ nbc,  d, d2, u] ) or 
-            (navigateBlobUrl[ nbc,  d, d2, u] ) or 
-            (navigateIframeBlobUrl[nbc.~nestedBcs, nbc,  d, d2, u] ) or
-            (navigateBlobNoBlobsUrl[  nbc,  d, d2, u] ) or 
-            (navigateAboutUrl[  nbc,  d, d2, u] ) or 
-            (navigateErrorUrl[  nbc,  d, d2, u, ValidUrl]  )
+            (navigateAbsoluteUrl[ nbc, d, u] and nbc.win in TopLWindow and  s in Server and d = s.resources[u.path] and d.elements = s.constantResources[u.path][d] and s in Dns.map[u.(AbsoluteUrl <: domain)] ) or 
+            (navigateDataUrl[ nbc,  d, u] ) or 
+            (navigateBlobUrl[ nbc,  d, u] and nbc.win in TopLWindow ) or 
+            (navigateIframeBlobUrl[nbc.~nestedBcs', nbc,  d, u] ) or
+            (navigateAboutUrl[  nbc.~nestedBcs', nbc,  d, u] ) or 
+            (navigateErrorUrl[  nbc,  d, u, ValidUrl]  )
         ) 
 
 
 }
+
+pred render_resource [f : Function, c : Call] {
+
+    let d2 = f.(RenderResource <: doc) | let u = d2.src | one sh : History | let nbc3 = f.(RenderResource <: newBc) | let nbc = f.bc |
+    
+    d2 in nbc.currentDoc.elements <: Document and
+
+    no d2.~currentDoc and 
+
+    nbc3 !in Browser.bcs and 
+    nbc3 !in BrowsingContext.nestedBcs and 
+
+    nbc3.currentDoc' = d2 and 
+
+    nbc.nestedBcs' = nbc.nestedBcs + nbc3 and 
+    nbc3.nestedBcs' = none and
+
+    addToSessionHistory[nbc3, sh, u] and
+
+    (
+        (createIframeAbsUrlDeny[ nbc, nbc3,  d2, u, c.to] and d2 = c.to.resources[u.path] and c.to in Server and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and unchangedCreateIframe[nbc, nbc3, True] ) or 
+        (createIframeAbsUrl[ nbc, nbc3,  d2, u] and d2 = c.to.resources[u.path] and c.to in Server and d2.elements = c.to.constantResources[u.path][d2] and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and unchangedCreateIframe[nbc, nbc3, True] ) or 
+        (createIframeDataUrl[  nbc, nbc3,  d2, u]  and unchangedCreateIframe[nbc, nbc3, True] ) or 
+        (createIframeTupleOriginBlobUrl[  nbc, nbc3,  d2, u] and unchangedCreateIframe[nbc, nbc3, True] ) or 
+        (createIframeNonTupleOriginBlobUrl[  nbc, nbc3,  d2, u] and unchangedCreateIframe[nbc, nbc3, True] ) or
+        (createIframeDataAboutBlobUrl[  nbc, nbc3,  d2, u] and unchangedCreateIframe[nbc, nbc3, True] ) or
+        (createIframeAboutUrl[ nbc, nbc3,  d2, u]  and unchangedCreateIframe[nbc, nbc3, True] ) or 
+        (createIframeInvalidDataAbsoluteUrl[ nbc, nbc3,  d2, u] and unchangedCreateIframe[nbc, nbc3, True] ) 
+    ) 
+
+
+
+}
+
+pred create_iframe [f : Function, c : Call] {
+
+    one sh : History |
+        let nbc = f.bc |
+        let nbc3 = f.(CreateIframe <: newBc) |
+        let d1 = f.(CreateIframe <: response) |
+        let u = f.(CreateIframe <: url) |
+
+        u = d1.src and
+
+        d1 !in Document.elements and
+
+        some nbc.currentDoc and
+
+        nbc3 !in Browser.bcs and 
+        nbc3 !in BrowsingContext.^nestedBcs and
+
+        nbc.nestedBcs' = nbc.nestedBcs + nbc3 and 
+        nbc.currentDoc.elements' = nbc.currentDoc.elements + d1 and
+
+
+        nbc3.win in Iframe and
+
+        d1 !in (BrowsingContext.currentDoc) and
+
+        addToSessionHistory[nbc3, sh, u] and
+        
+        (
+            (createIframeAbsUrlDeny[ nbc, nbc3,  d1, u, c.to] and d1 = c.to.resources[u.path ] and c.to in Server and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and unchangedCreateIframe[nbc, nbc3, False] ) or 
+            (createIframeAbsUrl[ nbc, nbc3,  d1, u] and d1 = c.to.resources[u.path ] and c.to in Server and d1.elements = c.to.constantResources[u.path][d1] and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and unchangedCreateIframe[nbc, nbc3, False] ) or 
+            (createIframeDataUrl[  nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False] ) or 
+            (createIframeTupleOriginBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False] ) or 
+            (createIframeNonTupleOriginBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False] ) or
+            (createIframeDataAboutBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False] ) or
+            (createIframeAboutUrl[ nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False] ) or 
+            (createIframeInvalidDataAbsoluteUrl[nbc, nbc3,  d1, u] and c.to in Browser and unchangedCreateIframe[nbc, nbc3, False]) 
+        ) 
+
+}
+
+
+
 
 
 
@@ -124,7 +187,6 @@ pred popup [f : Function, c : Call] {
 
         nbc.origin != StartupOrigin and
 
-        --BrowserVersion.version != Safari and 
 
         nbc.opening' = nbc.opening + nbc2 and 
 
@@ -134,150 +196,79 @@ pred popup [f : Function, c : Call] {
         d !in (BrowsingContext.currentDoc) and
 
         (
-            (popupAbsoluteUrl[nbc2, nbc, d, u ] and c.to in Server and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and d = c.to.resources[u.path]  ) or 
+            (popupAbsoluteBlobUrl[nbc2, nbc, d, u ] and c.to in Server and c.to in Dns.map[u.(AbsoluteUrl <: domain)] and d = c.to.resources[u.path] and d.elements = c.to.constantResources[u.path][d] ) or 
             (popupDataUrl[nbc2, nbc, d, u ] and c.to in Browser  ) or 
-            (popupAbsoluteSameOriginBlobUrl[nbc2, nbc, d, u ] and c.to in Browser  ) or 
-            (popupAbsoluteCrossOriginBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            (popupBlobBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            --(popupDataSameBcNullBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            --(popupDataAboutCrossBcNullBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            --(popupDataAboutOpenerBcNullBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            (popupDataAboutTupleBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
+            (popupAbsoluteBlobUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
             (popupAboutUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or 
-            --(popupAboutBlankOriginUrl[ nbc2, nbc, d, u ] and c.to in Browser ) or
             (popupErrorUrl[ nbc2, nbc, d, u ] and c.to in Browser )
         )
 }
 
 
-pred create_iframe [f : Function, c : Call] {
+pred reachability [nbc : BrowsingContext, nbc2 : BrowsingContext] {
 
-    one sh : History |
-        let nbc = f.bc |
-        let nbc3 = f.(CreateIframe <: newBc) |
-        let d1 = f.(CreateIframe <: response) |
-        let u = f.(CreateIframe <: url) |
-
-        nbc3 !in Browser.bcs and 
-        nbc3 !in BrowsingContext.^nestedBcs and
-
-        nbc.nestedBcs' = nbc.nestedBcs + nbc3 and 
-        nbc.currentDoc.elements' = nbc.currentDoc.elements + d1 and
+    let nestedNbc = (nbc.^~nestedBcs - nbc2.^~nestedBcs) | let nestedNbc2 = (nbc2.^~nestedBcs - nbc.^~nestedBcs ) |
+    let openingNbc = nbc.^~opening | let openingNbc2 = nbc2.^~opening |
+    let openingNestedNbc = nbc.^~opening.^~nestedBcs | let openingNestedNbc2 = nbc2.^~opening.^~nestedBcs | 
 
 
-        nbc3.win in Iframe and
+    sameOriginPolicy[nbc, nbc2] and 
 
-        d1 !in (BrowsingContext.currentDoc) and
-
-        addToSessionHistory[nbc3, sh, u] and
-        
-        (
-            (createIframeAbsoluteUrl[ nbc, nbc3,  d1, u, c.to] and d1 = c.to.resources[u.path ] and c.to in Server and c.to in Dns.map[u.(AbsoluteUrl <: domain)] ) or 
-            (createIframeDataUrl[  nbc, nbc3,  d1, u] and c.to in Browser ) or 
-            (createIframeTupleOriginBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser ) or 
-            (createIframeNonTupleOriginBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser ) or
-            (createIframeDataAboutBlobUrl[  nbc, nbc3,  d1, u] and c.to in Browser ) or
-            (createIframeAboutUrl[ nbc, nbc3,  d1, u] and c.to in Browser ) or 
-            (createIframeInvalidDataAbsoluteUrl[nbc, nbc3,  d1, u] and c.to in Browser ) 
-        ) 
-
+    ((nbc2 in nestedNbc and (all n : nestedNbc | sameOriginPolicy[nbc, n])) or
+        (nbc in nestedNbc2 and (all n : nestedNbc2 | sameOriginPolicy[nbc, n])) or
+        (nbc2 in openingNbc and (all n : openingNbc | sameOriginPolicy[nbc, n])) or
+        (nbc in openingNbc2 and (all n : openingNbc2 | sameOriginPolicy[nbc, n])) or
+        (nbc2 in openingNestedNbc and (all n : openingNestedNbc | sameOriginPolicy[nbc, n])) or
+        (nbc in openingNestedNbc2 and (all n : openingNestedNbc2 | sameOriginPolicy[nbc, n]))
+    )
 }
 
 
 
 
-pred add_sandbox [f : Function, c : Call] {
-
-    let nbc3 = f.(AddSandbox <: sandBc) |
-
-        nbc3 in f.bc.^nestedBcs and 
-
-        (nbc3.sandboxWaitingNavigate = False or nbc3.sandboxWaitingNavigate = none ) and
-
-        nbc3.sandboxWaitingNavigate' = True and 
-
-        unchanged[Browser, bcs] and
-        --unchanged[Browser, cookies] and
-        unchanged[Browser, blobs]  and
-        unchanged[BrowsingContext, (BrowsingContext <: origin)] and
-        --unchanged[BrowsingContext, window] and
-        unchanged[BrowsingContext, currentDoc] and
-        unchanged[BrowsingContext, nestedBcs] and
-        unchanged[BrowsingContext, sessionHistory] and
-        unchanged[BrowsingContext, isSecureContext]  and
-        unchanged[BrowsingContext, isSandboxed] and
-        unchanged[BrowsingContext - nbc3, sandboxWaitingNavigate] and
-        --unchanged[Window, doc] and
-        unchanged[BrowsingContext, opening] and
-        unchanged[BrowsingContext, accesses] and
-        unchanged[Document, (Document <: src)] and
-        unchanged[Document, elements] and
-        --unchanged[DataflowModule, accesses]
-        unchanged[History, (History <: next)]  and
-        unchanged[History, (History <: prev)] and
-        unchanged[Script, (Script <: context)] and 
-        unchanged[NonActive, (NonActive <: context)]
+pred document_write [f : Function, c : Call] {
 
 
-
-}
-
-
-
-pred document_write_iframeDocument [f : Function, c : Call] {
-
-
-    let nbc = f.bc |
+    let nbc = f.party |
         let nbc2 = f.targetBc |
         let d2 = f.(DocumentWrite <: newEl) |
-        --let w = f.bc.window |
-        --let w2 = nbc2.window |
 
-        f.party = nbc and
+        d2 !in Document.elements and
+        d2 !in BrowsingContext.currentDoc and
 
-        ((nbc2 in nbc.nestedBcs and d2 in nbc.currentDoc.elements)
-            or 
-            (nbc2 in nbc.opening and nbc2 in Browser.bcs) or 
-            (nbc in nbc2.opening and nbc2 in Browser.bcs)
-        ) and
+        nbc != nbc2 and 
 
-        d2 = nbc2.currentDoc and
+        some nbc.currentDoc and
+
+        reachability[nbc, nbc2] and
+
+        nbc2.currentDoc' = d2 and
 
         d2.(Document <: src') = nbc.currentDoc.(Document <: src) and 
 
-        d2.elements' = none and 
+        nbc2.~nestedBcs.currentDoc.elements' = nbc2.~nestedBcs.currentDoc.elements + d2 and
 
         nbc2.accesses' = none and
-        --nbc2.opening' = none and
-        --nbc2.~opening.opening' = nbc2.~opening.opening - nbc2 and
 
-        Browser.blobs' = Browser.blobs - (nbc.^nestedBcs -> Url) and
 
-        resetIframe[d2] and
+        resetIframe[nbc2.currentDoc] and
 
         nbc2.origin' = nbc.origin and 
-        nbc2.nestedBcs' = none and
      
-        unchanged[BrowsingContext - nbc2.^nestedBcs, currentDoc] and 
+        unchanged[BrowsingContext - (nbc2 + nbc2.^nestedBcs), currentDoc] and 
         unchanged[BrowsingContext - nbc2.^nestedBcs, sessionHistory] and 
         unchanged[BrowsingContext - nbc2.^nestedBcs, isSecureContext] and 
-        unchanged[BrowsingContext - (nbc2 + nbc2.^nestedBcs), nestedBcs] and
+        unchanged[BrowsingContext - nbc2.^nestedBcs, nestedBcs] and
         unchanged[BrowsingContext - nbc2.^nestedBcs, isSandboxed] and --because there are new elements inside
-        unchanged[BrowsingContext - nbc2.^nestedBcs, sandboxWaitingNavigate] and
         unchanged[Document - d2, (Document <: src)] and
-        unchanged[Document - (d2 + (d2.^elements <: Document) ), elements] and  
+        unchanged[Document - nbc2.~nestedBcs.currentDoc, elements] and  
         unchanged[Browser, bcs] and
-        --unchanged[Browser, cookies] and
-        --unchanged[Browser, blobs] and
+        unchanged[Browser, blobs] and
         unchanged[BrowsingContext - (nbc2 + nbc2.^nestedBcs), (BrowsingContext <: origin)] and
-        --unchanged[BrowsingContext, window] and
-        --unchanged[Window - nbc2.^nestedBcs.window, doc] and
         unchanged[BrowsingContext - ( nbc2.^nestedBcs), opening] and
         unchanged[BrowsingContext - (nbc2 + nbc2.^nestedBcs), accesses] and 
-        unchanged[History, (History <: next)]  and
-        unchanged[History, (History <: prev)] and 
-        unchanged[Script - (d2.^elements & Script), (Script <: context)] and 
-        unchanged[NonActive - (d2.^elements & NonActive), (NonActive <: context)]
+        unchanged[Script, (Script <: context)] and 
+        unchanged[NonActive, (NonActive <: context)]
     
         
 
@@ -289,31 +280,23 @@ pred access_to_media [f : Function, c : Call] {
 
 
     let nbc = f.bc |
-        --let w = f.canAccess |
 
         f.canAccess = nbc and
 
         nbc.accesses' = nbc.accesses + f.media and 
 
         unchanged[Browser, bcs] and
-        --unchanged[Browser, cookies] and
         unchanged[Browser, blobs]  and
         unchanged[BrowsingContext, (BrowsingContext <: origin)] and
-        --unchanged[BrowsingContext, window] and
         unchanged[BrowsingContext, currentDoc] and
         unchanged[BrowsingContext, nestedBcs] and
         unchanged[BrowsingContext, sessionHistory] and
         unchanged[BrowsingContext, isSecureContext]  and
         unchanged[BrowsingContext, isSandboxed] and
-        unchanged[BrowsingContext, sandboxWaitingNavigate] and
-        --unchanged[Window, doc] and
         unchanged[BrowsingContext, opening] and
         unchanged[BrowsingContext - nbc, accesses] and
         unchanged[Document, (Document <: src)] and
         unchanged[Document, elements] and
-        --unchanged[DataflowModule, accesses]
-        unchanged[History, (History <: next)]  and
-        unchanged[History, (History <: prev)] and 
         unchanged[Script, (Script <: context)] and 
         unchanged[NonActive, (NonActive <: context)]
 
@@ -336,9 +319,8 @@ fact mediaAccess {
 
                 nbc.origin !in StartupOrigin and
 
-                --nbc.currentDoc.src.authority.domain in m.permitted and 
                 some dom and dom in m.permitted and
-                decideUltimateSecureContext[nbc] = True  
+                decideSecureContext[nbc, nbc.currentDoc.src] = True  
             )
             
 

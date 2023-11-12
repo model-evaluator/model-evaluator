@@ -38,7 +38,6 @@ fact {
     always (all s : Server | s.xframeOptions.XFrameOptions in s.resources[Path] )
     always (all disj s1, s2 : Server | some s1.xframeOptions implies s1.xframeOptions.XFrameOptions !in s2.xframeOptions.XFrameOptions )
     always (all disj s1, s2 : Server | some s1.resources implies s1.resources[Path] !in s2.resources[Path] )
-    always (all s : Server | all p : Path | let res = s.resources[p] | let cres = s.resources[p][res] | res !in cres )
 }
 
 fact {
@@ -62,12 +61,15 @@ one sig AboutUrl extends ValidUrl {
 }{
     scheme = About
 }
-sig DataUrl extends ValidUrl {}{
+sig DataUrl extends ValidUrl {
+    content : one Document
+}{
     scheme = Data
 }
 
 abstract sig BlobUrl extends ValidUrl {
-    creator_origin : lone Origin
+    creator_origin : Origin,
+    content : one Document
 }{
     scheme = Blob
 }
@@ -109,10 +111,7 @@ fact {
     always (all d : Document | all n : Script | n in d.elements <=> n.(Script <: context ) = d)
     always (all r : HtmlResource | all d2, d3 : Document | (r in d2.elements and r in d3.elements) implies d2 = d3 )
     always (all d : Document | d.src !in ValidUrl implies d in ErrorDocument )
-    --always (all d1, d2 : Document | d1 in d2.^elements implies d1.src != d2.src )
-    --always (all d1, d2, d3 : Document | d1 in d3.elements and d2 in d3.elements implies d1 = d2 )
-
-    --always (all disj d1, d2, d3 : Document | (d1 in d2.elements and d2 in d3.elements) implies no (d1.elements <: Document) )
+    
 }
 
 abstract sig HtmlResource {}
@@ -200,6 +199,13 @@ fun origin [u : Url] : Origin {
 
 fact {
     all u : Url | some origin[u]
+}
+
+fun secure_urls [] : Url {
+    {u : Url |
+        u.scheme in Https or 
+        (u in BlobUrl and u.creator_origin in TupleOrigin and u.creator_origin.scheme in Https)
+    }
 }
 
 

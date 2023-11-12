@@ -35,7 +35,7 @@ fact {
 
     always (all b1, b2 : BrowsingContext | b1 in b2.nestedBcs implies b2 !in b1.^nestedBcs )
     always (all b : BrowsingContext | lone b.~nestedBcs )
-    --always (all b : BrowsingContext | no b.currentDoc implies no b.isSecureContext )
+
     always (all b : BrowsingContext | some b.currentDoc implies some b.isSecureContext )
     always (all disj b1, b2 : BrowsingContext | (some b1.currentDoc and some b2.currentDoc) implies b1.currentDoc != b2.currentDoc )
 

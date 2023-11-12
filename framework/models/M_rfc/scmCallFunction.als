@@ -43,12 +43,13 @@ fact {
             sameOriginPolicy[nbc, nbc2]
     )
 
-    always (all f : AddSandbox | 
+    always (all f : CreateIframe | 
         let nbc = f.bc |
-        let nbc2 = f.sandBc |
+        let nbc2 = f.(CreateIframe <: newBc) |
 
             sameOriginPolicy[nbc, nbc2]
     )
+
 
     always (all f : WindowOpen | let call = f.~event | call.to = Browser and call.from = none ) //in the future call.from could be User!
 
@@ -90,20 +91,16 @@ fact {
         call.to = f.(CreateIframe <: newBc) 
     )
 
-    always (all f : AddSandbox | let call = f.~event | 
-        call.to = f.sandBc 
-    )
-
     always (all f : DocumentWrite | let call = f.~event | 
         call.to = f.targetBc 
     )
 
-    always (all f : Skip | let call = f.~event |
+   always (all f : Skip | let call = f.~event |
         call.from = none and 
         call.to = none
     )
 
-    always (all f : Function - (WindowOpen + Navigate + Skip) | let call = f.~event |
+   always (all f : Function - (WindowOpen + LocationReplace + Navigate + Skip) | let call = f.~event |
         some call.from and 
         call.from in f.party.currentDoc.elements and 
         call.from in Script
@@ -137,20 +134,22 @@ fact {
 pred sameOriginPolicy [nbc : BrowsingContext, nbc2 : BrowsingContext] {
         nbc.origin != StartupOrigin and nbc2.origin != StartupOrigin and
         (
-            --(nbc.origin in OpaqueOrigin and nbc2.origin in OpaqueOrigin /*and equalsNonAbsoluteExceptFragment[nbc.currentDoc.src, nbc2.currentDoc.src]*/) or 
-            --(nbc.origin in BlankOrigin and nbc2.origin in BlankOrigin /*and equalsNonAbsoluteExceptFragment[nbc.currentDoc.src, nbc2.currentDoc.src]*/) or
-            (nbc2.currentDoc.src in AboutUrl and nbc.origin = nbc2.origin) or
+            
+            (nbc2.currentDoc.src in AboutUrl and nbc.isSandboxed = False and nbc2.isSandboxed = False and nbc.origin = nbc2.origin) or
             (nbc.origin in TupleOrigin and nbc2.origin in TupleOrigin and nbc.origin = nbc2.origin)
         )
 }
 
 var lone sig WindowOpen extends Function {}
 
+var lone sig RenderResource extends Function {
+    var doc : one Document,
+    var newBc : one BrowsingContext
+}
+
 var lone sig HistoryPushState extends Function {
     var tarUrl : one (Url + Path),
     var url : one Url
-}{
-   -- tarUrl in Path implies tarUrl in (DirectoryPath + BlobPath)
 }
 
 var lone sig LocationReplace extends Function {
@@ -161,7 +160,6 @@ var lone sig LocationReplace extends Function {
 var lone sig CreateBlob extends Function {
 
     var url : one Url
-    --var creatorDoc : one Document
 }
 
 var lone sig ReadDom extends Function {
@@ -181,9 +179,7 @@ var lone sig InjectScript extends Function {
 
 var lone sig Navigate extends Function {
     var url : one Url,
-    var response : lone Document--,
-    --var lr : one Boolean
-    --var party : one BrowsingContext
+    var response : lone Document
 }
 
 var lone sig Popup extends Function {
@@ -194,16 +190,10 @@ var lone sig Popup extends Function {
 
 var lone sig CreateIframe extends Function {
     var url : one Url,
-    --var party : one BrowsingContext,
     var response : one Document,
     var newBc : one BrowsingContext
 }
 
-var lone sig AddSandbox extends Function {
-    --var url : one Url,
-    --var party : one BrowsingContext,
-    var sandBc : one BrowsingContext
-}
 
 var lone sig DocumentWrite extends Function {
     var newEl : one Document, --HtmlResource,

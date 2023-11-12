@@ -6,58 +6,32 @@ open frameConditions
 open blobIframe
 open secureContext
 
-pred navigateOriginIframe [nbc : BrowsingContext, u : Url] {
-            (nbc.sandboxWaitingNavigate = True or nbc.isSandboxed = True) implies (
-                nbc.isSandboxed' = True and 
-                nbc.origin' = OpaqueOrigin and
-                nbc.sandboxWaitingNavigate' = False
-            )else (
-                nbc.origin' = origin[u] and
-                unchanged[nbc, isSandboxed] and 
-                unchanged[nbc, sandboxWaitingNavigate]
-            )
-}
 
 
 
-pred navigateOrigin [nbc : BrowsingContext, u : Url] {
-        nbc.win in TopLWindow implies (
-        
-            nbc.origin' = origin[u] and
-            --nbc.origin' = originW[u, nbc.win] and 
-            unchanged[nbc, isSandboxed] and 
-            unchanged[nbc, sandboxWaitingNavigate]
-        )else (
-            navigateOriginIframe[nbc, u]
-        )
-}
 
-pred BcGeneric [nbc : BrowsingContext, u : Url, d : Document, d2 : Document] {
+
+pred BcGeneric [nbc : BrowsingContext, u : Url] {
 
             nbc.isSecureContext' = decideSecureContext[nbc, u] and
-            navigateOrigin[nbc, u] and
 
-            addNavigateNoNestedBcs[nbc] and
+            nbc.origin' = origin[u] and
             
-            unchangedNavigateNested[nbc, d, d2] 
+            unchangedNavigateNested[nbc] 
 }
 
 pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url, s : Server] {
 
 
-                (nbc.sandboxWaitingNavigate = True implies (
-                    nbc.isSandboxed' = True and 
-                    nbc.origin' = OpaqueOrigin and
-                    nbc.sandboxWaitingNavigate' = False
-                )else (
-                    nbc.isSandboxed' = nbc.isSandboxed and 
-                    nbc.origin' = OpaqueOrigin and 
-                    nbc.sandboxWaitingNavigate' = False
-                )) and 
+
+
+                nbc.isSandboxed' = nbc.isSandboxed and 
 
                 some nbc.currentDoc implies (
 
                     nbc.isSecureContext' = decideSecureContext[nbc, d2.(Document<:src')] and
+
+                    nbc.origin' = nbc.origin and
                     
                     unchangedAbsNavSafariXFOptionsNested[nbc]
 
@@ -65,8 +39,9 @@ pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Documen
                     one u2 : Url |
                         u2 in AboutUrl and 
                         nbc.accesses' = none and
-                        --nbc.opening' = none and
-                        unchanged[nbc, opening] and --TODO
+                        nbc.origin' = nbc.~nestedBcs.origin and
+      
+                        unchanged[nbc, opening] and 
                         navAboutUrlCore[nbc, u2, d2, AboutUrl] and 
                         nbc.isSecureContext' = True and
                         unchangedNavigateAbsolute[nbc, d2]
@@ -76,39 +51,36 @@ pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Documen
 }
 
 --d2 = old document
-pred navigateAbsoluteUrl [nbc : BrowsingContext, d : Document, d2 : Document, u : Url] {
+pred navigateAbsoluteUrl [nbc : BrowsingContext, d : Document, u : Url] {
 
-            u in AbsoluteUrl and
+
 
             navAbsUrlCore[nbc, u, d] and
             
-            BcGeneric[nbc, u, d, d2]
+            BcGeneric[nbc, u]
 
 
 }
 
 
-pred navigateDataUrl [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url] {
+pred navigateDataUrl [ nbc : BrowsingContext, d : Document, u : Url] {
 
 
         navDataHtmlUrlCore[nbc, u, d] and
 
-        navigateOrigin[nbc, u] and
+        nbc.origin' = origin[u] and
 
-        addNavigateNoNestedBcs[nbc] and
             
-        unchangedNavigateNested[nbc, d, d2] and
+        unchangedNavigateNested[nbc] and
+
+        nbc.isSecureContext' = False
 
 
-        ((nbc.win in TopLWindow and nbc.isSecureContext' = True) or 
-        (nbc.win in Iframe and nbc.isSecureContext' = decideSecureContext[nbc, u]))
-
-        
 }
 
 
 
-pred navigateBlobUrl [ nbc : BrowsingContext,  d : Document, d2 : Document, u : Url] {
+pred navigateBlobUrl [ nbc : BrowsingContext,  d : Document, u : Url] {
 
 
         nbc.win in TopLWindow and
@@ -119,45 +91,25 @@ pred navigateBlobUrl [ nbc : BrowsingContext,  d : Document, d2 : Document, u : 
         nbc.isSecureContext' = decideSecureContext[nbc, u] and
         
 
-        navigateOrigin[nbc, u] and
+        nbc.origin' = origin[u] and
 
-        addNavigateNoNestedBcs[nbc] and
 
-        unchangedNavigateNested[nbc, d, d2] 
+        unchangedNavigateNested[nbc] 
 }
 
-pred navigateIframeBlobUrl [rbc : BrowsingContext, nbc : BrowsingContext,  d : Document, d2 : Document, u : Url] {
+pred navigateIframeBlobUrl [rbc : BrowsingContext, nbc : BrowsingContext,  d : Document, u : Url] {
 
         nbc.win in Iframe and
         
         (tupleOriginBlobUrl[rbc, nbc, d, u] or nonTupleOriginBlobUrl[rbc, nbc, d, u] or dataAboutBlobUrl[rbc, nbc, d, u]) and 
-        navigateOriginIframe[nbc, u] and
-        unchangedNavigateNested[nbc,  d, d2]
+        nbc.origin' = origin[u] and
+        unchangedNavigateNested[nbc]
     
 }
 
 
 
-pred navigateBlobNoBlobsUrl [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url] {
-
-
-        navBlobNoBlobsUrlCore[nbc, u, d] and
-        u !in Browser.blobs[BrowsingContext] and
-        nbc.isSecureContext' = True and
-
-        nbc.win in TopLWindow and
-
-        nbc.origin' = StartupOrigin and
-
-        unchanged[nbc, isSandboxed] and 
-        unchanged[nbc, sandboxWaitingNavigate] and
-
-        unchangedNavigate[nbc, d, d2] 
-
-}
-
---TODO
-pred navigateAboutUrl [  nbc : BrowsingContext, d : Document, d2 : Document, u : Url] {
+pred navigateAboutUrl [ rbc : BrowsingContext, nbc : BrowsingContext, d : Document, u : Url] {
 
 
         navAboutUrlCore[nbc, u, d, AboutUrl] and
@@ -166,48 +118,32 @@ pred navigateAboutUrl [  nbc : BrowsingContext, d : Document, d2 : Document, u :
             nbc.origin' = origin[u] and 
             nbc.isSecureContext' = True and
 
-            unchanged[nbc, isSandboxed] and 
-            unchanged[nbc, sandboxWaitingNavigate] 
+            unchanged[nbc, isSandboxed]  
         )else (
 
-            ((nbc.sandboxWaitingNavigate = True or nbc.isSandboxed = True) implies (
-                nbc.isSandboxed' = True and 
-                nbc.origin' = OpaqueOrigin and
-                nbc.sandboxWaitingNavigate' = False
-            )else (
-                nbc.origin' = nbc.~nestedBcs.origin and 
-                unchanged[nbc, isSandboxed] and 
-                unchanged[nbc, sandboxWaitingNavigate]
-            )) and
-            nbc.isSecureContext' = decideSecureContext[nbc, u]
+            nbc.origin' = rbc.origin and 
+            unchanged[nbc, isSandboxed] and 
+            nbc.isSecureContext' = rbc.isSecureContext
         )) and
 
-        --nbc.isSecureContext' = decideSecureContext[nbc, u] and
         
-        unchangedNavigate[nbc, d, d2] and
-        nbc.nestedBcs' = none 
+        unchangedNavigateNested[nbc] 
 
 }
 
 
 
-pred navigateErrorUrl [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url, allowedUrls : set Url] {
+pred navigateErrorUrl [ nbc : BrowsingContext, d : Document, u : Url, allowedUrls : set Url] {
 
         u !in allowedUrls and 
         navErrorUrlCore[nbc, u, d] and
         nbc.isSecureContext' = False and
         nbc.origin' = OpaqueOrigin and
 
-        ((nbc.sandboxWaitingNavigate = True or nbc.isSandboxed = True) implies (
-            nbc.isSandboxed' = True and
-            nbc.sandboxWaitingNavigate' = False
-        ) else (
-            unchanged[nbc, isSandboxed] and 
-            unchanged[nbc, sandboxWaitingNavigate] 
-        )) and
+        unchanged[nbc, isSandboxed] and 
 
         nbc.nestedBcs' = none and
-        unchangedNavigate[nbc, d, d2]
+        unchangedNavigateNested[nbc]
 }
 
 pred resetIframe [d2 : Document] {
@@ -217,18 +153,15 @@ pred resetIframe [d2 : Document] {
             let nbc = d.~currentDoc | 
 
 
-                d.elements' = none and
-
                 nbc.origin' = StartupOrigin and
                 nbc.currentDoc' = none and 
                 nbc.isSandboxed' = none and 
                 nbc.isSecureContext' = none and 
                 nbc.sessionHistory' = none and 
-                nbc.sandboxWaitingNavigate' = none and 
                 nbc.nestedBcs' = none and
                 nbc.opening' = none and 
                 nbc.accesses' = none
-        ) and 
+        ) /*and 
         (all scr : d2.^elements <: Script |
             scr.(Script <: context') = none
 
@@ -236,7 +169,9 @@ pred resetIframe [d2 : Document] {
         (all non : d2.^elements <: NonActive |
             non.(NonActive <: context') = none
 
-        )
+        )*/
 
 }
+
+
 

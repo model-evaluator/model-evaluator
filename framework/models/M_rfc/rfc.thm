@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="Int"/>
+   <type name="String"/>
+   <type name="univ"/>
+   <type name="seq/Int"/>
+   <type name="scmexec/scmCallFunction/RenderResource"/>
+   <type name="scmexec/contentmanipulation/browser/url/About"/>
+   <type name="scmexec/contentmanipulation/browser/url/Blob"/>
+   <type name="scmexec/contentmanipulation/browser/url/Chrome"/>
+   <type name="scmexec/contentmanipulation/browser/url/Data"/>
+   <type name="scmexec/contentmanipulation/browser/url/Deny"/>
+   <type name="scmexec/contentmanipulation/browser/url/False"/>
+   <type name="scmexec/contentmanipulation/browser/url/Http"/>
+   <type name="scmexec/contentmanipulation/browser/url/Https"/>
+   <type name="scmexec/contentmanipulation/browser/url/Iframe"/>
+   <type name="scmexec/contentmanipulation/browser/url/RFC"/>
+   <type name="scmexec/contentmanipulation/browser/url/Safari"/>
+   <type name="scmexec/contentmanipulation/browser/url/SameOrigin"/>
+   <type name="scmexec/contentmanipulation/browser/url/TopLWindow"/>
+   <type name="scmexec/contentmanipulation/browser/url/True"/>
+   <type name="scmexec/contentmanipulation/browser/url/open$5/Ord"/>
+   <type name="scmexec/contentmanipulation/browser/url/open$6/Ord"/>
+   <type name="scmexec/contentmanipulation/browser/url/open$7/Ord"/>
+   <type name="scmexec/contentmanipulation/browser/url/open$8/Ord"/>
+   <type name="scmexec/contentmanipulation/browser/url/ordering/Ord"/>
+</node>
+
+<node color="Blue" label="Url">
+   <type name="scmexec/contentmanipulation/browser/url/Url"/>
+</node>
+
+<node color="Gray" label="Document">
+   <type name="scmexec/contentmanipulation/browser/url/Document"/>
+</node>
+
+<node color="Green" label="BrowsingContext">
+   <type name="scmexec/contentmanipulation/browser/BrowsingContext"/>
+</node>
+
+<node color="Red" label="Function">
+   <type name="scmexec/scmCallFunction/Function"/>
+</node>
+
+<node label="AboutUrl">
+   <type name="scmexec/contentmanipulation/browser/url/AboutUrl"/>
+</node>
+
+<node label="AbsoluteUrl">
+   <type name="scmexec/contentmanipulation/browser/url/AbsoluteUrl"/>
+</node>
+
+<node label="Access2Media">
+   <type name="scmexec/scmCallFunction/Access2Media"/>
+</node>
+
+<node label="BlobUrl">
+   <type name="scmexec/contentmanipulation/browser/url/BlobUrl"/>
+</node>
+
+<node label="Boolean">
+   <type name="scmexec/contentmanipulation/browser/url/Boolean"/>
+</node>
+
+<node label="Browser">
+   <type name="scmexec/contentmanipulation/browser/Browser"/>
+</node>
+
+<node label="Call">
+   <type name="scmexec/scmCallFunction/Call"/>
+</node>
+
+<node label="Client">
+   <type name="scmexec/contentmanipulation/browser/url/Client"/>
+</node>
+
+<node label="CreateBlob">
+   <type name="scmexec/scmCallFunction/CreateBlob"/>
+</node>
+
+<node label="CreateIframe">
+   <type name="scmexec/scmCallFunction/CreateIframe"/>
+</node>
+
+<node label="DataUrl">
+   <type name="scmexec/contentmanipulation/browser/url/DataUrl"/>
+</node>
+
+<node label="DocumentWrite">
+   <type name="scmexec/scmCallFunction/DocumentWrite"/>
+</node>
+
+<node label="Endpoint">
+   <type name="scmexec/contentmanipulation/browser/url/Endpoint"/>
+</node>
+
+<node label="ErrorDocument">
+   <set name="scmexec/contentmanipulation/browser/url/ErrorDocument" type="scmexec/contentmanipulation/browser/url/Document"/>
+</node>
+
+<node label="ErrorUrl">
+   <type name="scmexec/contentmanipulation/browser/url/ErrorUrl"/>
+</node>
+
+<node label="HistoryPushState">
+   <type name="scmexec/scmCallFunction/HistoryPushState"/>
+</node>
+
+<node label="HtmlResource">
+   <type name="scmexec/contentmanipulation/browser/url/HtmlResource"/>
+</node>
+
+<node label="HttpUrl">
+   <type name="scmexec/contentmanipulation/browser/url/HttpUrl"/>
+</node>
+
+<node label="HttpsUrl">
+   <type name="scmexec/contentmanipulation/browser/url/HttpsUrl"/>
+</node>
+
+<node label="InjectScript">
+   <type name="scmexec/scmCallFunction/InjectScript"/>
+</node>
+
+<node label="LocationReplace">
+   <type name="scmexec/scmCallFunction/LocationReplace"/>
+</node>
+
+<node label="Navigate">
+   <type name="scmexec/scmCallFunction/Navigate"/>
+</node>
+
+<node label="NonActive">
+   <type name="scmexec/contentmanipulation/browser/url/NonActive"/>
+</node>
+
+<node label="OpaqueOrigin">
+   <type name="scmexec/contentmanipulation/browser/url/OpaqueOrigin"/>
+</node>
+
+<node label="Origin">
+   <type name="scmexec/contentmanipulation/browser/url/Origin"/>
+</node>
+
+<node label="Popup">
+   <type name="scmexec/scmCallFunction/Popup"/>
+</node>
+
+<node label="ReadDom">
+   <type name="scmexec/scmCallFunction/ReadDom"/>
+</node>
+
+<node label="Scheme">
+   <type name="scmexec/contentmanipulation/browser/url/Scheme"/>
+</node>
+
+<node label="Script">
+   <type name="scmexec/contentmanipulation/browser/url/Script"/>
+</node>
+
+<node label="Skip">
+   <type name="scmexec/scmCallFunction/Skip"/>
+</node>
+
+<node label="StartupOrigin">
+   <type name="scmexec/contentmanipulation/browser/url/StartupOrigin"/>
+</node>
+
+<node label="StartupUrl">
+   <type name="scmexec/contentmanipulation/browser/url/StartupUrl"/>
+</node>
+
+<node label="TupleOrigin">
+   <type name="scmexec/contentmanipulation/browser/url/TupleOrigin"/>
+</node>
+
+<node label="ValidUrl">
+   <type name="scmexec/contentmanipulation/browser/url/ValidUrl"/>
+</node>
+
+<node label="Version">
+   <type name="scmexec/contentmanipulation/browser/url/Version"/>
+</node>
+
+<node label="Window">
+   <type name="scmexec/contentmanipulation/browser/url/Window"/>
+</node>
+
+<node label="WindowOpen">
+   <type name="scmexec/scmCallFunction/WindowOpen"/>
+</node>
+
+<node label="WriteDom">
+   <type name="scmexec/scmCallFunction/WriteDom"/>
+</node>
+
+<node visible="no" label="Dns">
+   <type name="scmexec/contentmanipulation/browser/url/Dns"/>
+</node>
+
+<node visible="no" label="Domain">
+   <type name="scmexec/contentmanipulation/browser/url/Domain"/>
+</node>
+
+<node visible="no" label="History">
+   <type name="scmexec/contentmanipulation/browser/history/History"/>
+</node>
+
+<node visible="no" label="Media">
+   <type name="scmexec/contentmanipulation/browser/url/Media"/>
+</node>
+
+<node visible="no" label="Path">
+   <type name="scmexec/contentmanipulation/browser/url/Path"/>
+</node>
+
+<node visible="no" label="Port">
+   <type name="scmexec/contentmanipulation/browser/url/Port"/>
+</node>
+
+<node visible="no" label="Server">
+   <type name="scmexec/contentmanipulation/browser/url/Server"/>
+</node>
+
+<node visible="no" label="XFrameOptions">
+   <type name="scmexec/contentmanipulation/browser/url/XFrameOptions"/>
+</node>
+
+<node visible="no" label="XFrameOptionsType">
+   <type name="scmexec/contentmanipulation/browser/url/XFrameOptionsType"/>
+</node>
+
+<edge style="inherit">
+   <relation name="blobs"> <type name="scmexec/contentmanipulation/browser/Browser"/> <type name="scmexec/contentmanipulation/browser/BrowsingContext"/> <type name="scmexec/contentmanipulation/browser/url/BlobUrl"/> </relation>
+   <relation name="doc"> <type name="scmexec/scmCallFunction/RenderResource"/> <type name="scmexec/contentmanipulation/browser/url/Document"/> </relation>
+   <relation name="newBc"> <type name="scmexec/scmCallFunction/RenderResource"/> <type name="scmexec/contentmanipulation/browser/BrowsingContext"/> </relation>
+</edge>
+
+<edge visible="no">
+   <relation name="scheme"> <type name="scmexec/contentmanipulation/browser/url/TupleOrigin"/> <type name="scmexec/contentmanipulation/browser/url/Scheme"/> </relation>
+   <relation name="scheme"> <type name="scmexec/contentmanipulation/browser/url/Url"/> <type name="scmexec/contentmanipulation/browser/url/Scheme"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
