@@ -36,12 +36,19 @@ java -jar target/model*.jar modelcheck M_cam/test.als cameraAttack 100 0 1
 
 ```
 where:
+
 The "modelcheck" argument is for choosing the model checking part in the framework.
+
 The "M_cam/test.als" : shows the model directory (M_cam) and the root model file (test.als).
+
 The "cameraAttack" : shows the property to be checked.
+
 The fourth argument "100" : shows the number of instances to be generated.
+
 The fifth argument "0" : indicates the decompose mode in model checking; 0 is batch, 1 is hybrid, 2 is parallel. 
+
 The sixth argument "1" : indicates the number of threads; for batch strategy it should be 1; for other choices more than 1.
+
 After model checking if a counterexample is found, a "trace.txt" file will be stored in the "input" folder in the directory. The solution instances (100) will be stored in "output" folder. The .xml files in this folder can be visualised with Alloy Analyzer tool.
 
 
@@ -53,12 +60,16 @@ java -jar target/model*.jar validate input/trace.txt
 ```
 where:
 The "validate" argument is for choosing the validation part in the framework.
+
 The "input/trace.txt" argument shows the counterexample trace in the input directory (which was outputted by the model checker in the previous example). 
 
 
 #### The model files are in the framework/models directory.
+
 M_rfc : Safari browser RFC model
+
 M_cam : Camera access model
+
 M_sch : Side-channel access model
 
 
