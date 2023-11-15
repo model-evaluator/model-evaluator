@@ -218,7 +218,7 @@ pred add_sandbox [f : Function, c : Call] {
 
 
 
-pred document_write_iframeDocument [f : Function, c : Call] {
+pred document_write [f : Function, c : Call] {
 
 
     let nbc = f.bc |

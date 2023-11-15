@@ -9,15 +9,8 @@ import org.javers.core.diff.changetype.container.ListChange;
 
 import model.function.Event;
 
-public class DiffState {
+public class ModelDiffState {
 	
-//	public State startState;
-//	
-//	public State endState;
-	
-//	public Window focusedWindow;
-	
-//	public String focusedEvent;
 	
 	public String rootBc;
 	
@@ -27,7 +20,6 @@ public class DiffState {
 	
 	public String event;
 	
-//	public Document document;
 	
 	public List<ListChange> listChanges;
 	
@@ -38,12 +30,11 @@ public class DiffState {
 	public List<OriginChange> originChanges;
 	
 	
-	public DiffState() {
+	public ModelDiffState() {
 		this.listChanges = new ArrayList<ListChange>();
 		this.initValueChanges = new ArrayList<InitialValueChange>();
 		this.valueChanges = new ArrayList<ValueChange>();
 		this.originChanges = new ArrayList<OriginChange>();
-//		this.focusedEvent = "";
-//		this.focusedWindow = "";
+
 	}
 }

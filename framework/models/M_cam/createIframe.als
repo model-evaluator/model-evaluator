@@ -2,7 +2,6 @@ module createIframe
 
 open navigateCore
 open frameConditions
---open scmCallFunction
 open secureContext
 open sandbox
 open blobIframe

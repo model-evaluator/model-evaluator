@@ -40,7 +40,7 @@ import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import model.Browser;
 import model.BrowsingContext;
-import model.DiffState;
+import model.ModelDiffState;
 import model.Document;
 import model.History;
 import model.Media;
@@ -97,12 +97,12 @@ public class MainAdapter {
 				
 			}else {
 				System.out.println("Something is wrong in the arguments :: Below are two examples on how to run the framework::");
-				System.out.println("1) java -jar target/model*.jar modelcheck M_rfc/test.als cameraAttack 100 0 1 \n M_rfc/test.als = the model, cameraAttack = the property to be checked, 100 = number of instances to generate, 0 = decompose mode, 1 = decompose threads\n it will create a trace.txt file in the input/ directory which can be used in testcase ");
+				System.out.println("1) java -jar target/model*.jar modelcheck M_cam/test.als cameraAttack 100 0 1 \n M_cam/test.als = the model, cameraAttack = the property to be checked, 100 = number of instances to generate, 0 = decompose mode, 1 = decompose threads\n it will create a trace.txt file in the input/ directory which can be used in testcase ");
 				System.out.println("2) java -jar target/model*.jar validate input/trace.txt ;; input/trace.txt shows the input trace taken from model checker output");
 			}
 		}else {
 			System.out.println("Something is wrong in the arguments :: Below are two examples on how to run the framework::");
-			System.out.println("1) java -jar target/model*.jar modelcheck M_rfc/test.als cameraAttack 100 0 1 \n M_rfc/test.als = the model, cameraAttack = the property to be checked, 100 = number of instances to generate, 0 = decompose mode, 1 = decompose threads\n it will create a trace.txt file in the input/ directory which can be used in testcase ");
+			System.out.println("1) java -jar target/model*.jar modelcheck M_cam/test.als cameraAttack 100 0 1 \n M_cam/test.als = the model, cameraAttack = the property to be checked, 100 = number of instances to generate, 0 = decompose mode, 1 = decompose threads\n it will create a trace.txt file in the input/ directory which can be used in testcase ");
 			System.out.println("2) java -jar target/model*.jar validate input/trace.txt ;; input/trace.txt shows the input trace taken from model checker output");
 		}
 		
@@ -205,12 +205,12 @@ public class MainAdapter {
 		List<Browser> states = Parser.parse(args[0]);
 		int a = 0;
 		
-		List<DiffState> diffStateList = new ArrayList<DiffState>();
+		List<ModelDiffState> diffStateList = new ArrayList<ModelDiffState>();
 		for (int i = 0; i < states.size(); i++) {
 
 			if (i < states.size() - 1) {
 
-				DiffState diffState = new DiffState();
+				ModelDiffState diffState = new ModelDiffState();
 				Object item1 = states.get(i);
 				Object item2 = states.get(i + 1);
 				

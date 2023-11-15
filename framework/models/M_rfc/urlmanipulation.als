@@ -2,7 +2,6 @@ module urlmanipulation
 
 open scmCallFunction
 open browser
---open concreteTrust
 open appendHistory
 open navigate
 

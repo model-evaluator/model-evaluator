@@ -23,9 +23,8 @@ pred navDataHtmlUrlCore [nbc : BrowsingContext, url : Url, d : Document ] {
     d !in ErrorDocument
     url in DataUrl
     nbc.currentDoc' = d
-    --w.doc' = d
     d.src' = url
-    d.elements' = none--d.elements
+    d.elements' = none
 }
 
 
@@ -82,7 +81,7 @@ pred noDocInside [els : set Document ] {
 }
 
 pred addNavigateNoNestedBcs [ nbc : BrowsingContext] {
-    --noDocInside[d1.elements] implies 
+
     no nbc.nestedBcs'
 }
 

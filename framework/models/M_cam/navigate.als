@@ -37,15 +37,7 @@ pred navigateOrigin [nbc : BrowsingContext, u : Url, lr : Boolean] {
         )
 }
 
-pred BcGeneric [nbc : BrowsingContext, u : Url, d : Document, d2 : Document, lr : Boolean] {
 
-            nbc.isSecureContext' = decideSecureContext[nbc, u] and
-            navigateOrigin[nbc, u, lr] and
-
-            addNavigateNoNestedBcs[nbc] and
-            
-            unchangedNavigateNested[nbc, d, d2] 
-}
 
 pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url, s : Server] {
 
@@ -87,7 +79,12 @@ pred navigateAbsoluteUrl [nbc : BrowsingContext, d : Document, d2 : Document, u 
 
             navAbsUrlCore[nbc, u, d] and
             
-            BcGeneric[nbc, u, d, d2, lr]
+            nbc.isSecureContext' = decideSecureContext[nbc, u] and
+            navigateOrigin[nbc, u, lr] and
+
+            addNavigateNoNestedBcs[nbc] and
+            
+            unchangedNavigateNested[nbc, d, d2]
 
 
 }
@@ -161,7 +158,7 @@ pred navigateBlobNoBlobsUrl [ nbc : BrowsingContext, d : Document, d2 : Document
 
 }
 
---TODO
+
 pred navigateAboutUrl [  nbc : BrowsingContext, d : Document, d2 : Document, u : Url] {
 
 
@@ -187,8 +184,6 @@ pred navigateAboutUrl [  nbc : BrowsingContext, d : Document, d2 : Document, u :
             nbc.isSecureContext' = decideSecureContext[nbc, u]
         )) and
 
-        --nbc.isSecureContext' = decideSecureContext[nbc, u] and
-        
         unchangedNavigate[nbc, d, d2] and
         nbc.nestedBcs' = none 
 

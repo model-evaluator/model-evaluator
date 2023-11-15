@@ -45,7 +45,7 @@ pred unchangedNavigateNested [nbc : BrowsingContext] {
 }
 
 
-pred unchangedAbsNavSafariXFOptionsNested [nbc : BrowsingContext] {
+pred unchangedAbsNavXFOptionsNested [nbc : BrowsingContext] {
         
 
         unchanged[Browser, bcs]

@@ -2,7 +2,6 @@ module urlmanipulation
 
 open scmCallFunction
 open browser
---open concreteTrust
 open appendHistory
 open navigate
 
@@ -91,7 +90,7 @@ pred hpsBlobNoPath [nbc : BrowsingContext, u : Url, f : Function] {--blob://
         x = f.tarUrl
 }
 
-pred hpsBlobPath [nbc : BrowsingContext, u : Url, f : Function] {//skype.com
+pred hpsBlobPath [nbc : BrowsingContext, u : Url, f : Function] {//example.com
     let x = f.(HistoryPushState <: url) |
 
 
@@ -101,7 +100,7 @@ pred hpsBlobPath [nbc : BrowsingContext, u : Url, f : Function] {//skype.com
         u in BlobNoPathUrl and
         f.tarUrl in BlobOnlyDomainUrl and 
 
-        x in BlobAbsoluteUrl --blob://skype.com
+        x in BlobAbsoluteUrl --blob://example.com
 
 }
 

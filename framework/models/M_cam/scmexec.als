@@ -25,13 +25,13 @@ pred scmExec [f : Function, c : Call] {
       let d = f.(Navigate <: response) |
       (navigateAbsUrlDeny[f, c, u, d] or 
       navigateAbsUrlNoDeny[f, c, u, d, f.lr] or 
-      navigate[f, c, u, d, f.lr])   
+      navigate[f, c, u, d, f.lr])   --f.lr=True -> Location replace
     ) 
     f in HistoryPushState implies ( history_push_state[f, c]  )
     f in CreateBlob implies (create_blob[f, c] )
     f in CreateIframe implies (create_iframe[f, c] )
     f in AddSandbox implies (add_sandbox[f, c] )
-    f in DocumentWrite implies (document_write_iframeDocument[f, c] )
+    f in DocumentWrite implies (document_write[f, c] )
     f in Access2Media implies (access_to_media[f, c]  )
     f in Skip implies no_change
 }

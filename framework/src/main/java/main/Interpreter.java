@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -18,8 +19,8 @@ import org.openqa.selenium.WebElement;
 
 import model.Browser;
 import model.BrowsingContext;
-import model.DiffState;
-import model.LiveBcInfo;
+import model.ModelDiffState;
+import model.ImplementationState;
 import model.OriginChange;
 import model.function.Access2Media;
 import model.function.CreateBlob;
@@ -39,13 +40,13 @@ public class Interpreter {
 	
 	public List<Browser> rawStates;
 	
-	public List<DiffState> diffList;
+	public List<ModelDiffState> diffList;
 	
 	public HashMap<String, String> nameHandleMap;
 	
 	public Invoker invoker;
 	
-	public Interpreter(List<Browser> rawStates, List<DiffState> diffList  ) {
+	public Interpreter(List<Browser> rawStates, List<ModelDiffState> diffList  ) throws IOException {
 		this.rawStates = rawStates;
 		this.diffList = diffList;
 		this.invoker = new Invoker();
@@ -54,24 +55,18 @@ public class Interpreter {
 	
 	public String interpret() throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		//String firstTabName = invoker.invokeNewTab(true, nameHandleMap);
-		LiveBcInfo prevLiveBcInfo = invoker.invokeNewTab(true);
-		//System.out.println("firstTabName::"+ firstTabName);
+		
+		ImplementationState prevLiveBcInfo = invoker.invokeNewTab(true);
+		
 		nameHandleMap.put(diffList.get(0).bc, prevLiveBcInfo.currentHandle);
-		LiveBcInfo liveBcInfo = null;
+		ImplementationState liveBcInfo = null;
 		List<Url> listOfUrls = rawStates.get(0).urls;
-		
-		
-		
-//		invoker.driver.get("about:blank");
-		
-		//HashMap<String, Object> windowReferenceMap = new HashMap<String, Object>();
 		
 		String result = "";
 		
 		for (int i = 0; i < diffList.size(); i++) {
 			Browser rawState = rawStates.get(i);
-			DiffState diffState = diffList.get(i);
+			ModelDiffState diffState = diffList.get(i);
 			
 			String rootBc = diffState.rootBc;
 			String bc = diffState.bc;
@@ -108,18 +103,17 @@ public class Interpreter {
 						}
 						
 						
-						//Navigate nav = (Navigate) rawState.function.event;
-						//String urlStr = nav.url;
+						
 						String handle = nameHandleMap.get(rootBc);
 						String handle2 = handle;
 						if (!rootBc.equals(bc)) {
 							handle2 = nameHandleMap.get(bc);
 						}
-						//String xFrameOption = nav.xFrameOption;
+						
 						for(Url url : listOfUrls) {
 							if (url.name.equals(urlStr)) {
 								if ((xFrameOption.equals("Deny") | (xFrameOption.equals("SameOrigin") && xFrameOptionsSameOriginCheckFails(rawState.bcs, bc, url)) ) && ((url instanceof HttpUrl) | (url instanceof HttpsUrl) )) {
-									//add same origin here..
+									
 									
 									String xFrameUrl = HttpsUrl.xFrameCorresponding;
 									
@@ -148,7 +142,7 @@ public class Interpreter {
 					}else if (event.equals("HistoryPushState")) {
 						HistoryPushState hps = (HistoryPushState) rawState.function.event;
 						String targetUrl = hps.tarUrl;
-						//String urlStr = hps.url;
+						
 						String handle = nameHandleMap.get(rootBc);
 						String handle2 = handle;
 						if (!rootBc.equals(bc)) {
@@ -190,7 +184,7 @@ public class Interpreter {
 								liveBcInfo = invoker.invokeDocumentWrite2Child(handle, targetId );
 								
 							}else {
-								//Object reference = windowReferenceMap.get(targetBc);
+								
 								liveBcInfo = invoker.invokeDocumentWrite2Popup(handle, handle2, targetId);
 							}
 						}
@@ -207,25 +201,16 @@ public class Interpreter {
 							if (url.name.equals(urlStr)) {
 								liveBcInfo = invoker.invokePopup(url.corresponding, handle, handle2);
 								nameHandleMap.put(newBc, liveBcInfo.currentHandle);
-								//windowReferenceMap.put(liveBcInfo.currentHandle, liveBcInfo.newTabReference);
+								
 							}
 						}
 					}else if (event.equals("Access2Media")) {
-						//Access2Media a2m = (Access2Media) rawState.function.event;
+						
 						String handle = nameHandleMap.get(party);
 						liveBcInfo = invoker.invokeAccess2Media(handle);
 					}
 					
-				/*}else {
-					
-				}
-			}else {
 				
-			}*/
-			/*if (i == 0 || i == 7) {
-				System.out.println(event);
-				int b = 0;
-			}*/
 			
 			String res = checkStatus(prevLiveBcInfo, liveBcInfo, diffState, nameHandleMap);
 			
@@ -238,7 +223,7 @@ public class Interpreter {
 			}
 			
 			
-			System.out.println("RES:: " + res);
+			System.out.println("RESULT:: " + res);
 			System.out.println("ERROR:: " + liveBcInfo.errorMessage);
 			prevLiveBcInfo = liveBcInfo;
 			int a = 0;
@@ -269,7 +254,7 @@ public class Interpreter {
 	}
 	
 	
-	public String cameraInUseResult (LiveBcInfo liveBcInfo, String bc) {
+	public String cameraInUseResult (ImplementationState liveBcInfo, String bc) {
 		
 		for (BrowsingContext nbc : liveBcInfo.bcs) {
 			if (nbc.name.equals(bc)) {
@@ -342,7 +327,7 @@ public class Interpreter {
 		return "-1";
 	}
 	
-	public String checkStatus (LiveBcInfo prevLiveBcInfo, LiveBcInfo liveBcInfo, DiffState diffState, HashMap<String, String> nameHandleMap ) {
+	public String checkStatus (ImplementationState prevLiveBcInfo, ImplementationState liveBcInfo, ModelDiffState diffState, HashMap<String, String> nameHandleMap ) {
 		
 		Javers javers = JaversBuilder.javers()
 				.withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
@@ -350,7 +335,7 @@ public class Interpreter {
 
 		Diff diff = javers.compare(prevLiveBcInfo, liveBcInfo);
 		
-		DiffState diffState2 = new DiffState();
+		ModelDiffState diffState2 = new ModelDiffState();
 		diff.getChangesByType(ValueChange.class).forEach(ch -> {
 			
 			if (ch.getAffectedGlobalId().getTypeName().equals("model.BrowsingContext")) {
@@ -383,7 +368,7 @@ public class Interpreter {
 		
 	}
 	
-	public String checkOrigins (DiffState diffState, DiffState diff, HashMap<String, String> nameHandleMap) {
+	public String checkOrigins (ModelDiffState diffState, ModelDiffState diff, HashMap<String, String> nameHandleMap) {
 		String result = "";
 		
 		for (String name : nameHandleMap.keySet()) {
@@ -393,7 +378,7 @@ public class Interpreter {
 		
 	}
 	
-	public String checkOrigin (DiffState diffState, DiffState diff, String name) {
+	public String checkOrigin (ModelDiffState diffState, ModelDiffState diff, String name) {
 		String result = "";
 
 		boolean vcOriginChange = false;
@@ -447,7 +432,7 @@ public class Interpreter {
 	}
 	
 	
-	public String checkSecureContexts (DiffState diffState, DiffState diff, HashMap<String, String> nameHandleMap) {
+	public String checkSecureContexts (ModelDiffState diffState, ModelDiffState diff, HashMap<String, String> nameHandleMap) {
 		String result = "";
 		
 		for (String name : nameHandleMap.keySet()) {
@@ -456,7 +441,7 @@ public class Interpreter {
 		return result;
 		
 	}
-	public String checkSecureContext(DiffState diffState, DiffState diff, String name) {
+	public String checkSecureContext(ModelDiffState diffState, ModelDiffState diff, String name) {
 		
 		String result = "";
 		

@@ -25,7 +25,7 @@ import com.google.gson.JsonPrimitive;
 
 import model.Browser;
 import model.BrowsingContext;
-import model.DiffState;
+import model.ModelDiffState;
 import model.Document;
 import model.History;
 import model.Media;

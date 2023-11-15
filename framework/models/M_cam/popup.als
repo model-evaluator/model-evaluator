@@ -147,8 +147,7 @@ pred popupDataSameBcNullBlobUrl [ nbc : BrowsingContext, openerBc : BrowsingCont
                 openerBc.currentDoc.src in (DataUrl + AboutUrl) and
 
                 pu in Browser.blobs[openerBc] and
-                --openerBc.origin = originW[pu, nbc.win] and
-
+                
                 originW[pu, nbc.win] in BlankOrigin and
 
                 nbc.isSecureContext' = True and
@@ -174,7 +173,7 @@ pred popupDataAboutCrossBcNullBlobUrl [ nbc : BrowsingContext, openerBc : Browsi
 
                 pu in Browser.blobs[BrowsingContext] and
                 pu !in Browser.blobs[openerBc + openerBc.^~opening + openerBc.^opening] and
-                --openerBc.origin = originW[pu, nbc.win] and
+                
 
                 originW[pu, nbc.win] in BlankOrigin and
 

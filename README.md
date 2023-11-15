@@ -63,6 +63,13 @@ The "validate" argument is for choosing the validation part in the framework.
 
 The "input/trace.txt" argument shows the counterexample trace in the input directory (which was outputted by the model checker in the previous example). 
 
+To run the validation, you need BrowserStack account. Then, you can run the application after replacing the following lines in the `framework/authentication.txt` file.
+ ```
+USERNAME
+AUTOMATE_KEY
+
+```
+
 
 #### The model files are in the framework/models directory.
 

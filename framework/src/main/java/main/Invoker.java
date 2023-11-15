@@ -25,7 +25,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import model.BrowsingContext;
 import model.Document;
-import model.LiveBcInfo;
+import model.ImplementationState;
 import model.Window;
 import model.url.BlankOrigin;
 import model.url.Domain;
@@ -35,6 +35,10 @@ import model.url.StartupOrigin;
 import model.url.TupleOrigin;
 import model.url.Url;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -47,11 +51,25 @@ public class Invoker {
 	
 	//public DevTools devTool;
 	
-	public static final String USERNAME = "ilkanesiyok1";
-    public static final String AUTOMATE_KEY = "zr7aJyBJCBtwoag9X1QY";
-    public static final String URL = "https://" + USERNAME + ":" + AUTOMATE_KEY + "@hub-cloud.browserstack.com/wd/hub";
+	//public static final String USERNAME = "******";
+    //public static final String AUTOMATE_KEY = "*********";
+    //public static final String URL = "https://" + USERNAME + ":" + AUTOMATE_KEY + "@hub-cloud.browserstack.com/wd/hub";
 	
-	public Invoker() {
+	public Invoker() throws IOException {
+		
+		File file = new File("authentication.txt");
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		
+		String USERNAME;
+		String AUTOMATE_KEY;
+		String URL;
+
+		USERNAME = br.readLine();
+		AUTOMATE_KEY = br.readLine();
+		fr.close();
+		URL = "https://" + USERNAME + ":" + AUTOMATE_KEY + "@hub-cloud.browserstack.com/wd/hub";
+
 		
 		//driver = new SafariDriver();
 		
@@ -59,7 +77,6 @@ public class Invoker {
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         
-        // Create a nested capability
         DesiredCapabilities webkitCapabilities = new DesiredCapabilities();
         webkitCapabilities.setCapability("DisableICECandidateFiltering", true);
         webkitCapabilities.setCapability("DisableInsecureMediaCapture", true);
@@ -67,9 +84,7 @@ public class Invoker {
         // Set the nested capability on the primary capabilities object
         capabilities.setCapability("webkit:WebRTC", webkitCapabilities.asMap());
         capabilities.setCapability("browserstack.consoleLogs", "info");
-        //capabilities.setCapability("safari:automaticProfiling", true);
-        
-        //MutableCapabilities mutCapabilities = new MutableCapabilities();
+
 		capabilities.setCapability("browserName", "Safari");
 		HashMap<String, Object> browserstackOptions = new HashMap<String, Object>();
 		browserstackOptions.put("os", "OS X");
@@ -83,40 +98,7 @@ public class Invoker {
         // Merge primary capabilities with Safari options
         options.merge(capabilities);
 
-        // Start SafariDriver with the specified options
-        //WebDriver driver = new SafariDriver(options);
-		
-		//so.setCapability("DisableInsecureMediaCapture", true);
-		
-		
-		
-		//so.addArguments("use-fake-device-for-media-stream");
-	    //so.addArguments("use-fake-ui-for-media-stream");
-		
-/*
-		DesiredCapabilities caps = new DesiredCapabilities();
-		
-		MutableCapabilities capabilities = new MutableCapabilities();
-		capabilities.setCapability("browserName", "Safari");
-		HashMap<String, Object> browserstackOptions = new HashMap<String, Object>();
-		browserstackOptions.put("os", "OS X");
-		browserstackOptions.put("osVersion", "Mojave");
-		browserstackOptions.put("browserVersion", "12.0");
-		browserstackOptions.put("local", "false");
-		browserstackOptions.put("seleniumVersion", "3.14.0");
-		//browserstackOptions.put("DisableInsecureMediaCapture", true);
-		capabilities.setCapability("webkit:WebRTC::DisableInsecureMediaCapture", true);*/
-		
-		
-	/*	"webkit:WebRTC": {
-            "DisableICECandidateFiltering": false,
-            "DisableInsecureMediaCapture": false
-        },*/
-		
-		
-		
-		//caps.setCapability(AUTOMATE_KEY, false);
-		//capabilities.setCapability("bstack:options", browserstackOptions);
+
 		try {
 			driver = new RemoteWebDriver(new URL(URL), capabilities);
 		} catch (MalformedURLException e) {
@@ -125,14 +107,10 @@ public class Invoker {
 		}
 		
 		
-		
-		//devTool = driver.getDevTools();
-		
-		//devTool.createSession();
 
 	}
 	
-	public LiveBcInfo invokeNewTab(boolean firstTabControl) {
+	public ImplementationState invokeNewTab(boolean firstTabControl) {
 		
 		String handle = "";
 		
@@ -150,7 +128,7 @@ public class Invoker {
 		handle = tabs.get(tabs.size()-1);
 		driver.switchTo().window(handle);
 		
-		LiveBcInfo liveBcInfo = takeAllBcs(firstTabControl, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(firstTabControl, tabs);
 		liveBcInfo.currentHandle = handle;
 		//BrowsingContext bc = takeBCLiveInfo(firstTabControl, driver.getWindowHandle(), nameHandleMap, false, true);
 		
@@ -158,7 +136,7 @@ public class Invoker {
 		
 	}
 	
-	public LiveBcInfo invokeNavigate(String url, String handle, String nestedHandle, boolean locationReplace) {
+	public ImplementationState invokeNavigate(String url, String handle, String nestedHandle, boolean locationReplace) {
 		driver.switchTo().window(handle);
 		
 		if (!handle.equals(nestedHandle)) {
@@ -179,82 +157,27 @@ public class Invoker {
 					((JavascriptExecutor) driver).executeScript(script);
 		}
 		
-		//if (url.equals("about:blank")){
-		//	driver.get(url);
-		//}else {
-			
-			
-			/*String script2 = 
-					"var scriptElement = document.createElement('script');\n" +
-					"scriptElement.textContent = `" +
-				    "function hackCamera(){ " +               
-				    "    document.body.innerHTML='<video style=\"margin:0; border: 0; width: 100%; height: 100%\" autoplay playsinline></video>';" + 
-				    "    const constraints = window.constraints = {" +
-				    "        audio: true," +
-				    "        video: true" +
-				    "    };" +
-				    "    async function init() {" +
-				    "        try {" +
-				    "            const stream = await navigator.mediaDevices.getUserMedia(constraints);" +
-				    "            handleSuccess(stream);" +
-				    "        } catch (e) {" +
-				    "            console.log(e);" +
-				    "        }" +
-				    "    }" +
-				    "    function handleSuccess(stream) {" +
-				    "        const video = document.querySelector('video');" +
-				    "        const videoTracks = stream.getVideoTracks();" +
-				    "        window.stream = stream;" +
-				    "        video.srcObject = stream;" +
-				    "    }" +
-				    "    init();" +
-				    "}`;\n" + 
-				    "document.body.appendChild(scriptElement);\n" + 
-				    "setTimeout(function() {console.log('Wait here');}, 3000);\n" +
-				    "hackCamera();";
-			
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			((JavascriptExecutor) driver).executeScript(script2);
-			
-			String script3 = "let callback = arguments[arguments.length - 1];" + 
-	                "navigator.mediaDevices.enumerateDevices().then(function(devices) { callback(devices); }).catch(function(err) { callback(err); });";
-
-			Object result = ((JavascriptExecutor) driver).executeAsyncScript(script3);
-
-			if (result instanceof List<?>) {
-			    List<Map<String, Object>> devices = (List<Map<String, Object>>) result;
-			    boolean cameraInUse = devices.stream().anyMatch(device -> "videoinput".equals(device.get("kind")) && "live".equals(device.get("readyState")));
-			    System.out.println("cameraInUSE:: " + cameraInUse );
-			} else {
-			    // Handle error
-			    System.out.println("Error fetching devices: " + result);
-			}*/
-		//}
+		
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		//JavascriptExecutor jse = (JavascriptExecutor) driver;
+		
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = handle;
 		liveBcInfo.errorMessage = "";
 		return liveBcInfo;
 	} 
 	
-	public LiveBcInfo invokeCreateBlob(String handle) {
+	public ImplementationState invokeCreateBlob(String handle) {
 		driver.switchTo().window(handle);
 		String script = "var blob = new Blob(['Hello, world!'], {type: 'text/plain'});" +
                 "return window.URL.createObjectURL(blob);"; 
 		String blobUrl = (String) ((JavascriptExecutor) driver).executeScript(script);
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = handle;
 		liveBcInfo.correspondingUrl = blobUrl;
 		liveBcInfo.errorMessage = "";
@@ -262,7 +185,7 @@ public class Invoker {
 		
 	}
 	
-	public LiveBcInfo invokeHistoryPushState(String url, String handle, String nestedHandle) {
+	public ImplementationState invokeHistoryPushState(String url, String handle, String nestedHandle) {
 		driver.switchTo().window(handle);
 		if (!handle.equals(nestedHandle)) {
 			driver.switchTo().frame(nestedHandle);
@@ -276,14 +199,14 @@ public class Invoker {
 		}
 		
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = handle;
 		liveBcInfo.errorMessage = error;
 		return liveBcInfo;
 		
 	}
 	
-	public LiveBcInfo invokeCreateIframe (String url, String handle) {
+	public ImplementationState invokeCreateIframe (String url, String handle) {
 		driver.switchTo().window(handle);
 		String error = "";
 		String id = "iframe-" + UUID.randomUUID().toString();
@@ -295,7 +218,7 @@ public class Invoker {
 			error = e.getLocalizedMessage();
 		}
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = handle;
 		liveBcInfo.errorMessage = error;
 		liveBcInfo.newBc = id;
@@ -304,9 +227,9 @@ public class Invoker {
 
 	}
 	
-	public LiveBcInfo invokeDocumentWrite2Child(String handle, String targetId) {
+	public ImplementationState invokeDocumentWrite2Child(String handle, String targetId) {
 		driver.switchTo().window(handle);
-		//WebElement iframeElement = driver.findElement(By.id(targetId));
+		
 		String error = "";
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		String script = "document.getElementById('" + targetId + "').contentDocument.write('Document write applied');";
@@ -316,13 +239,13 @@ public class Invoker {
 			error = e.getLocalizedMessage();
 		}
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = handle;
 		liveBcInfo.errorMessage = error;
 		return liveBcInfo;
 	}
 	
-	public LiveBcInfo invokePopup(String url, String handle, String nestedHandle) {
+	public ImplementationState invokePopup(String url, String handle, String nestedHandle) {
 		driver.switchTo().window(handle);
 		
 		if (!handle.equals(nestedHandle)) {
@@ -332,7 +255,7 @@ public class Invoker {
 		
 		Set<String> originalHandles = driver.getWindowHandles();
 		
-		//String script = "window.newPopupWindow = window.open('" + url + "');";
+		
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		
 		String script = "window.newWindow = window.open('" + url + "', 'newWindow');";
@@ -357,29 +280,22 @@ public class Invoker {
 		driver.switchTo().window(newTabHandle);
 
 		
-		//JavascriptExecutor jse = (JavascriptExecutor) driver;
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.currentHandle = newTabHandle;
 		liveBcInfo.errorMessage = error;
-		//liveBcInfo.newTabReference = newTabReference;
+		
 		return liveBcInfo;
 	} 
 	
-	public LiveBcInfo invokeDocumentWrite2Popup(String handle, String nestedHandle, String windowReference) {
+	public ImplementationState invokeDocumentWrite2Popup(String handle, String nestedHandle, String windowReference) {
 		driver.switchTo().window(handle);
 		
 		if (!handle.equals(nestedHandle)) {
 			driver.switchTo().frame(nestedHandle);
 		}
 		String error = "";
-		
-//		String script = "if (window.newPopupWindow && !window.newPopupWindow.closed && window.newPopupWindow.contentWindow) {\n"
-//				+ "    //window.newPopupWindow.contentWindow.document.write('content document overwritten.');\n"
-//				+ "		return '1';"
-//				+ "} else {\n"
-//				+ "    return '0';"
-//				+ "};";
+
 		
 		String script = "newWindow.document.write('Hello there');";
 		
@@ -388,7 +304,6 @@ public class Invoker {
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		try {
 			js.executeScript(script);
-			//System.out.println(result);
 		}catch (Exception e) {
 			error = e.getLocalizedMessage();
 		}
@@ -399,18 +314,18 @@ public class Invoker {
 		}
 		driver.switchTo().window(windowReference);
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		liveBcInfo.errorMessage = error;
 		liveBcInfo.currentHandle = windowReference;
 		return liveBcInfo;
 	}
 	
-	public LiveBcInfo invokeAccess2Media(String handle) {
+	public ImplementationState invokeAccess2Media(String handle) {
 		driver.switchTo().window(handle);
 		
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 
-		// Step 1: Insert the script into the document
+		//  Insert the script into the document
 		String script = 
 				"var scriptElement = document.createElement('script');\n" +
 				"scriptElement.textContent = `" +
@@ -442,9 +357,6 @@ public class Invoker {
 		
 		
 		
-		//System.out.println(script);
-
-		//js.executeScript(script);
 		String error = "";
 		try {
 			js.executeScript(script);
@@ -475,13 +387,10 @@ public class Invoker {
 		    System.out.println("Error fetching devices: " + result);
 		}
 
-		// Step 2: Now, execute the inserted script
-		//Object response = js.executeScript("hackCamera();");
-		//System.out.println(response.toString());
 
 		
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		LiveBcInfo liveBcInfo = takeAllBcs(false, tabs);
+		ImplementationState liveBcInfo = takeAllBcs(false, tabs);
 		
 		liveBcInfo.errorMessage = error;
 		liveBcInfo.currentHandle = handle;
@@ -489,13 +398,13 @@ public class Invoker {
 		return liveBcInfo;
 	}
 	
-	public LiveBcInfo takeAllBcs(boolean firstTabControl, ArrayList<String> handles ) {
+	public ImplementationState takeAllBcs(boolean firstTabControl, ArrayList<String> handles ) {
 		List<BrowsingContext> bcs = new ArrayList<BrowsingContext>();
 		for (String handle : handles) {
 			BrowsingContext bc = takeBCLiveInfo(firstTabControl, handle, false, true);
 			bcs.add(bc);
 		}
-		LiveBcInfo liveBcInfo = new LiveBcInfo();
+		ImplementationState liveBcInfo = new ImplementationState();
 		liveBcInfo.bcs = bcs;
 		
 		return liveBcInfo;
@@ -510,35 +419,26 @@ public class Invoker {
 		if(topLevel) {
 			
 			driver.switchTo().window(handle);
-			/*try {
-				WebDriverWait wait = new WebDriverWait(driver, 50);
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("body")));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}*/
+			
 		}
 		
-		//driver.get("https://www.example.com");
+		
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		boolean isSecure = (boolean) jse.executeScript("return window.isSecureContext;");
-		//System.out.println("Href::" + driver.getCurrentUrl());
+		
 		String origin = (String) jse.executeScript("var x = origin; return x;");
 		String urlStr = (String) jse.executeScript("return window.location.href;");
-		//System.out.println("Origin::" + origin);
+		
 		
 		System.out.println(handle + " Href:: " + urlStr + " Origin:: " + origin + " SC:: " + isSecure);
-		//boolean isTopLevel = (boolean) jse.executeScript("return window === window.parent;");
-		//boolean isSandboxed = false;
-		
-		//System.out.println("Origin=="  + origin);
+
 		
 		if (firstTabControl) {
 			liveBc.origin = StartupOrigin.getInstance();
-			//Document doc = new Document();
-			//doc.name = "null";
+	
 			liveBc.currentDoc = null;
 			liveBc.accesses = null;
-			//isSecure = true;
+	
 		}else {
 			liveBc.accesses = null;//TODO
 			
@@ -547,8 +447,8 @@ public class Invoker {
 				liveBc.origin = OpaqueOrigin.getInstance();
 			}else if(origin.equals("://")) {
 				liveBc.origin = BlankOrigin.getInstance();
-			}else {//if (origin == "") {
-				//tuple origin
+			}else {
+				
 				String id = "tuple-" + handle;
 				TupleOrigin to = new TupleOrigin(id);
 				String ansLine[] = origin.toString().split("://");
@@ -567,7 +467,6 @@ public class Invoker {
 			
 			Document doc = new Document();
 			
-			//String urlStr = (String) jse.executeScript("return window.location.href;");
 			Url url = new Url(urlStr);
 			url.scheme = findSchemeInUrlStr(urlStr);
 			
@@ -602,7 +501,7 @@ public class Invoker {
 	            }
 	            
 	            _nestedBcs.add(nestedLiveBc);
-	            System.out.println("abc:" + iframes.size() );
+	            
 	        }
 			
 			if (_nestedBcs.size() > 0) {
@@ -611,7 +510,7 @@ public class Invoker {
 				liveBc.nestedBcs = null;
 			}
 			liveBc.currentDoc = doc;
-			//isSecure = true;
+			
 		}
 		liveBc.opening = null;
 		liveBc.sandboxWaitingNavigate = false;

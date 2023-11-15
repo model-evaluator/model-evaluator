@@ -53,7 +53,7 @@ pred history_append [elems : set History, elems2 : set History, te : History]  {
 
 }
 
-pred history_append_first [elems : set History, elems2 : set History, te : History] {
+pred history_append_init [elems : set History, elems2 : set History, te : History] {
 
 	elems2 = elems + te --and 
 

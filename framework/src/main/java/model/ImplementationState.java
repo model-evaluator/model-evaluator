@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.javers.core.metamodel.annotation.Id;
 
-public class LiveBcInfo {
+public class ImplementationState {
 	
 	public List<BrowsingContext> bcs;
 	
@@ -19,6 +19,5 @@ public class LiveBcInfo {
 	
 	public boolean cameraInUse;
 	
-	//public Object newTabReference;
 
 }

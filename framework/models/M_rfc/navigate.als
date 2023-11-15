@@ -8,21 +8,7 @@ open secureContext
 
 
 
-
-
-
-pred BcGeneric [nbc : BrowsingContext, u : Url] {
-
-            nbc.isSecureContext' = decideSecureContext[nbc, u] and
-
-            nbc.origin' = origin[u] and
-            
-            unchangedNavigateNested[nbc] 
-}
-
 pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Document, u : Url, s : Server] {
-
-
 
 
                 nbc.isSandboxed' = nbc.isSandboxed and 
@@ -33,7 +19,7 @@ pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Documen
 
                     nbc.origin' = nbc.origin and
                     
-                    unchangedAbsNavSafariXFOptionsNested[nbc]
+                    unchangedAbsNavXFOptionsNested[nbc]
 
                 )else (
                     one u2 : Url |
@@ -50,14 +36,18 @@ pred navigateAbsoluteUrlDeny [ nbc : BrowsingContext, d : Document, d2 : Documen
         
 }
 
---d2 = old document
+
 pred navigateAbsoluteUrl [nbc : BrowsingContext, d : Document, u : Url] {
 
 
 
             navAbsUrlCore[nbc, u, d] and
             
-            BcGeneric[nbc, u]
+            nbc.isSecureContext' = decideSecureContext[nbc, u] and
+
+            nbc.origin' = origin[u] and
+            
+            unchangedNavigateNested[nbc] 
 
 
 }
